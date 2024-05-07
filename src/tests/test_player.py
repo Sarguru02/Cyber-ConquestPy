@@ -5,5 +5,5 @@ import unittest
 
 class TestPlayer(unittest.TestCase):
     def test_name(self):
-        player = Player("Bank")
+        player = Player("Player1")
         self.assertNotEqual(player.name, 'Bank')
