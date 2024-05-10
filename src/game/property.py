@@ -3,7 +3,7 @@ from typing import Self
 NORMAL = "normal"
 CHANCE = "chance"
 COMMUNITY_CHEST = "community_chest"
-JAIL = "jail"
+JAIL = "CryptoLocker"
 KRONOS = "kronos"
 GO = "go"
 INCOME_TAX = "income_tax"
@@ -20,6 +20,8 @@ class Property:
         else:
             self.owner = "Bank"
         self.price = price
+    def __str__(self) -> str:
+        return f"Property {{name: {self.property_name}, price: {self.price}, owner: {self.owner}}}"
 
 
 DEFAULT_BOARD = [
@@ -89,7 +91,7 @@ class Player:
 
     def move(self, dicevalue):
         if self.position + dicevalue >= len(DEFAULT_BOARD):
-            self.cash += 2000
+            self.cash += 200
         self.position = (self.position + dicevalue) % len(DEFAULT_BOARD)
 
     def __str__(self) -> str:
