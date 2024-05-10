@@ -23,6 +23,14 @@ class NetworkManager:
         self.game = connections
         websockets.broadcast(connections, f"Game{self.counter} started!")
 
+
+class Game:
+    def __init__(self, players) -> None:
+        self.players = players
+        self.current_player = players[0]
+
+    def play(self):
+        pass
 async def main():
     network_manager = NetworkManager()
     async with websockets.serve(network_manager.handle_connection, "localhost", 42069):
