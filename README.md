@@ -3,12 +3,13 @@
 ### special boxes
 - [ ] handleChance
 - [ ] handleCommunityChest
-- [ ] jail
-- [ ] kronos
-- [ ] No internet
+- [x] kronos
+- [x] No internet
 - [x] income tax
+- [x] crypto locker
 
 
+#### renting logic not implemented
 
 # Network stuff is still pending
 

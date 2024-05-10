@@ -3,15 +3,15 @@ from typing import Self
 NORMAL = "normal"
 CHANCE = "chance"
 COMMUNITY_CHEST = "community_chest"
-JAIL = "CryptoLocker"
+JAIL = "No Internet"
 KRONOS = "kronos"
 GO = "go"
 INCOME_TAX = "income_tax"
-NO_INTERNET = "no_internet"
+CRYPTO_LOCKER = "crypto_locker"
 
 
 class Property:
-    def __init__(self, property_name, price, isBuyable, type=NORMAL):
+    def __init__(self, property_name, price, isBuyable: bool, type=NORMAL):
         self.property_name = property_name
         self.type = type
         if not isBuyable:
