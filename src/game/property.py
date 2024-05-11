@@ -20,6 +20,7 @@ class Property:
         else:
             self.owner = "Bank"
         self.price = price
+
     def __str__(self) -> str:
         return f"Property {{name: {self.property_name}, price: {self.price}, owner: {self.owner}}}"
 
@@ -32,7 +33,7 @@ DEFAULT_BOARD = [
     Property("Income Tax", None, False, INCOME_TAX),
     Property("Memory Game", 1000, True),
     Property("Git", 1000, True),
-    Property("Crypto Locker", None, False, JAIL),
+    Property("Crypto Locker", None, False, CRYPTO_LOCKER),
     Property("Panchathanthiram", 1000, True),
     Property("RIP", None, False),
     Property("Chance", None, False, CHANCE),
