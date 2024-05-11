@@ -1,8 +1,8 @@
 # For the basic monopoly implementation
 
 ### special boxes
-- [ ] handleChance
-- [ ] handleCommunityChest
+- [x] handleChance
+- [x] handleCommunityChest
 - [x] kronos
 - [x] No internet
 - [x] income tax

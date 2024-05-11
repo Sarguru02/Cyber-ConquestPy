@@ -39,7 +39,7 @@ DEFAULT_BOARD = [
     Property("Windows", 1000, True),
     Property("AI", 1000, True),
     Property("Connection", 1000, True),
-    Property("No Internet", None, False, NO_INTERNET),
+    Property("No Internet", None, False, JAIL),
     Property("Linux", 1000, True),
     Property("Sales Pitch", 1000, True),
     Property("Cyber Security", 1000, True),

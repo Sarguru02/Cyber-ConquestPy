@@ -1,2 +1,2 @@
 from . import property
-from . import GameManager
+from . import manager

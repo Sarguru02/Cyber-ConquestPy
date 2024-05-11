@@ -1,6 +1,6 @@
-from game.GameManager import GameManager
+from game.manager import manager
 
-game = GameManager()
+game = manager()
 game.add_player("Player1")
 game.add_player("Player2")
 game.start()
