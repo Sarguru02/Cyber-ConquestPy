@@ -1,6 +1,7 @@
 # For the basic monopoly implementation
 
 ### special boxes
+
 - [x] handleChance
 - [x] handleCommunityChest
 - [x] kronos
@@ -8,8 +9,13 @@
 - [x] income tax
 - [x] crypto locker
 
+#### renting logic partially implemented
 
-#### renting logic not implemented
+#### Validator functions need to be written
+
+- run asynchronously
+- triggered on any object in it assigned type that undergoes changes
+- checks for the valid states, if any discrepancy detected -> does the action fed (like disqualifing or forcing to get loan from bank when a player gets negative balance)
 
 # Network stuff is still pending
 

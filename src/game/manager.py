@@ -34,7 +34,8 @@ class manager:
 
         if landingBox.type == Props.INCOME_TAX:
             # the player should lose 200 for every property he owns
-            self.current_player.cash -= 200 * len(self.current_player.properties)
+            self.current_player.cash -= 200 * \
+                len(self.current_player.properties)
             return "You paid 200 for each property you own"
 
         if landingBox.type == Props.KRONOS:
@@ -46,6 +47,16 @@ class manager:
                 self.current_player.properties[-1].owner = "Bank"
                 self.current_player.properties.pop()
             return "You lost half of your properties"
+
+        if landingBox.type == Props.NORMAL:
+            if (landingBox.owner != "Bank"):
+                if (landingBox.owner != self.current_player):
+                    self.current_player.cash -= int(landingBox.price * 0.1)
+                    landingBox.owner.cash += int(landingBox.price * 0.1)
+                    return "You gotta pay the rent! 🙃"
+                return "Enjoy your property bruhh 👍"
+            else:
+                return "You can buy this if you want... 🤷‍♂️"
 
     def print_board(self):
         for box in self.board:
@@ -74,7 +85,8 @@ class manager:
             return "Collect $20 as an investment in your company."
         elif ch == 6:
             if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * len(self.current_player.properties)
+                self.current_player.cash += 25 * \
+                    len(self.current_player.properties)
                 return "Invest in cryptocurrency early. Collect $25 for each property you own."
         elif ch == 7:
             self.current_player.cash += 50
@@ -107,7 +119,8 @@ class manager:
             return "Upgrade your home with smart tech. Pay $50 for the upgrade."
         elif ch == 8:
             if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * len(self.current_player.properties)
+                self.current_player.cash += 25 * \
+                    len(self.current_player.properties)
                 return "Invest in blockchain technology. Collect $25 for each property you own."
             return "Do nothing"
         else:
@@ -150,4 +163,5 @@ class manager:
                 break
             print(self.current_player)
             self.current_turn += 1
-            self.current_player = self.players[self.current_turn % len(self.players)]
+            self.current_player = self.players[self.current_turn % len(
+                self.players)]
