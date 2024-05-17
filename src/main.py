@@ -1,37 +1,52 @@
 import asyncio
 import websockets
 from game.manager import manager
+import random
+import json
 
 
 class NetworkManager:
     def __init__(self):
-        self.connections = []
         self.game = manager()
         self.started = asyncio.Event()
         self.host = None
         self.counter = 0
 
     async def handle_connection(self, websocket, path):
-        if path.split("/")[-1] == "host":
+        params = path.split("?")[-1].split("&")
+        user = params[0].split("=")[-1]
+        name = params[1].split("=")[-1]
+        if user == "host":
             if self.host is None:
-                self.host = websocket
+                await self.hostHandler(websocket, name)
             else:
-                await websocket.send("Host already connected!")
-                return
-        if path.split("/")[-1] == "player":
-            if self.host is not None:
-                websockets.broadcast(self.connections, "New player connected!")
-                self.connections.append(websocket)
-            else:
-                await websocket.send("Host not connected!")
-                return
+                await websocket.send("Host is already connected")
+        if user == "player":
+            await self.playerHandler(websocket, name)
+
+    async def hostHandler(self, websocket, name):
+        self.host = websocket
+        print('host connected:', name)
+        key = self.gen_key()
+        await websocket.send(json.dumps({"key": key}))
         async for message in websocket:
-            pass
+            msg = json.loads(message)
+            print(msg)
+
+    async def playerHandler(self, websocket, name):
+        self.game.add_player(name, websocket)
+        async for message in websocket:
+            msg = json.loads(message)
+            print(msg)
 
     async def start_game(self, connections):
         self.counter += 1
         self.game = connections
         websockets.broadcast(connections, f"Game{self.counter} started!")
+
+    def gen_key(self):
+        n = random.randint(1000, 9999)
+        return f"CC{n}"
 
 
 async def main():
