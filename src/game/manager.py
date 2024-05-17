@@ -13,10 +13,10 @@ class manager:
 
     def add_player(self, name, socket=None):
         player = Player(name, socket=socket)
-        print(player)
         self.players.append(player)
 
     def handleLanding(self, landingBox, dicevalue):
+        # this function handles all the landing boxes and special boxes. Special boxes are the ones given in the constants in Props
         if landingBox.type == Props.JAIL:
             # the player should not be able to move for 3 turns
             # the player should be released in the game loop when his turn comes
@@ -34,8 +34,7 @@ class manager:
 
         if landingBox.type == Props.INCOME_TAX:
             # the player should lose 200 for every property he owns
-            self.current_player.cash -= 200 * \
-                len(self.current_player.properties)
+            self.current_player.cash -= 200 * len(self.current_player.properties)
             return "You paid 200 for each property you own"
 
         if landingBox.type == Props.KRONOS:
@@ -49,8 +48,8 @@ class manager:
             return "You lost half of your properties"
 
         if landingBox.type == Props.NORMAL:
-            if (landingBox.owner != "Bank"):
-                if (landingBox.owner != self.current_player):
+            if landingBox.owner != "Bank":
+                if landingBox.owner != self.current_player:
                     self.current_player.cash -= int(landingBox.price * 0.1)
                     landingBox.owner.cash += int(landingBox.price * 0.1)
                     return "You gotta pay the rent! 🙃"
@@ -85,8 +84,7 @@ class manager:
             return "Collect $20 as an investment in your company."
         elif ch == 6:
             if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * \
-                    len(self.current_player.properties)
+                self.current_player.cash += 25 * len(self.current_player.properties)
                 return "Invest in cryptocurrency early. Collect $25 for each property you own."
         elif ch == 7:
             self.current_player.cash += 50
@@ -119,8 +117,7 @@ class manager:
             return "Upgrade your home with smart tech. Pay $50 for the upgrade."
         elif ch == 8:
             if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * \
-                    len(self.current_player.properties)
+                self.current_player.cash += 25 * len(self.current_player.properties)
                 return "Invest in blockchain technology. Collect $25 for each property you own."
             return "Do nothing"
         else:
@@ -163,5 +160,4 @@ class manager:
                 break
             print(self.current_player)
             self.current_turn += 1
-            self.current_player = self.players[self.current_turn % len(
-                self.players)]
+            self.current_player = self.players[self.current_turn % len(self.players)]

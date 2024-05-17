@@ -1,22 +1,32 @@
 import asyncio
 import websockets
+from game.manager import manager
+
 
 class NetworkManager:
     def __init__(self):
         self.connections = []
-        self.game = None
+        self.game = manager()
         self.started = asyncio.Event()
+        self.host = None
         self.counter = 0
 
-    async def handle_connection(self, websocket):
-        self.connections.append(websocket)
-        websockets.broadcast(self.connections, "New player connected!")
-        if len(self.connections) >= 2:
-            await self.start_game(self.connections[:2])
-            self.connections = self.connections[2:]
+    async def handle_connection(self, websocket, path):
+        if path.split("/")[-1] == "host":
+            if self.host is None:
+                self.host = websocket
+            else:
+                await websocket.send("Host already connected!")
+                return
+        if path.split("/")[-1] == "player":
+            if self.host is not None:
+                websockets.broadcast(self.connections, "New player connected!")
+                self.connections.append(websocket)
+            else:
+                await websocket.send("Host not connected!")
+                return
         async for message in websocket:
-            print(f"Received message: {message}")
-            await websocket.send("Hello, world!")
+            pass
 
     async def start_game(self, connections):
         self.counter += 1
@@ -24,16 +34,10 @@ class NetworkManager:
         websockets.broadcast(connections, f"Game{self.counter} started!")
 
 
-class Game:
-    def __init__(self, players) -> None:
-        self.players = players
-        self.current_player = players[0]
-
-    def play(self):
-        pass
 async def main():
     network_manager = NetworkManager()
     async with websockets.serve(network_manager.handle_connection, "localhost", 42069):
         await asyncio.Future()
+
 
 asyncio.run(main())

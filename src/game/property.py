@@ -8,6 +8,7 @@ KRONOS = "kronos"
 GO = "go"
 INCOME_TAX = "income_tax"
 CRYPTO_LOCKER = "crypto_locker"
+RIP = "RIP"
 
 
 class Property:
@@ -35,7 +36,7 @@ DEFAULT_BOARD = [
     Property("Git", 1000, True),
     Property("Crypto Locker", None, False, CRYPTO_LOCKER),
     Property("Panchathanthiram", 1000, True),
-    Property("RIP", None, False),
+    Property("RIP", None, False, RIP),
     Property("Chance", None, False, CHANCE),
     Property("Windows", 1000, True),
     Property("AI", 1000, True),
