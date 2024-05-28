@@ -1,4 +1,5 @@
 import random
+from typing import List
 from . import property as Props
 from .property import DEFAULT_BOARD
 from .property import Player
@@ -7,13 +8,25 @@ from .property import Player
 class manager:
     def __init__(self):
         self.board = DEFAULT_BOARD
-        self.players = []
-        self.current_player = None
+        self.players: List[Player] = []
+        self.current_player= None
         self.current_turn = 0
+        self.host = None
 
-    def add_player(self, name, socket=None):
+    def add_player(self, name, socket):
         player = Player(name, socket=socket)
         self.players.append(player)
+
+    def remove_player(self, socket):
+        player = self.getPlayerBySocket(socket)
+        if player is not None:
+            self.players.remove(player)
+
+    def getPlayerBySocket(self, socket):
+        for i in self.players:
+            if i.socket is socket:
+                return i
+        return None
 
     def handleLanding(self, landingBox, dicevalue):
         # this function handles all the landing boxes and special boxes. Special boxes are the ones given in the constants in Props
