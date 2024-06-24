@@ -1,0 +1,2 @@
+watchmedo auto-restart --pattern "*.py" --recursive --signal SIGTERM \
+    python src/main.py

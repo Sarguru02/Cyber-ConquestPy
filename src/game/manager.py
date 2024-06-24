@@ -1,39 +1,37 @@
+import json
 import random
 from typing import List
+
 from . import property as Props
 from .property import DEFAULT_BOARD
 from .property import Player
 
+async def sendmsg(socket, msg):
+    await socket.send(json.dumps({'type': 'message', 'params': {'message': msg}}))
+
 
 class manager:
-    def __init__(self):
+    def __init__(self, host):
         self.board = DEFAULT_BOARD
         self.players: List[Player] = []
-        self.current_player= None
         self.current_turn = 0
-        self.host = None
+        self.host= host
 
-    def add_player(self, name, socket):
-        player = Player(name, socket=socket)
+    def add_player(self, name, ws):
+        player = Player(name, socket=ws)
         self.players.append(player)
 
-    def remove_player(self, socket):
-        player = self.getPlayerBySocket(socket)
-        if player is not None:
-            self.players.remove(player)
+    def remove_player(self, ws):
+        self.players = [p for p in self.players if p.ws is not ws]
 
-    def getPlayerBySocket(self, socket):
-        for i in self.players:
-            if i.socket is socket:
-                return i
-        return None
 
     def handleLanding(self, landingBox, dicevalue):
+        current_player = self.players[self.current_turn]
         # this function handles all the landing boxes and special boxes. Special boxes are the ones given in the constants in Props
         if landingBox.type == Props.JAIL:
             # the player should not be able to move for 3 turns
             # the player should be released in the game loop when his turn comes
-            self.current_player.inJail = True
+            current_player.inJail = True
             return "You are in jail"
         if landingBox.type == Props.GO:
             # the player should get 200
@@ -47,23 +45,23 @@ class manager:
 
         if landingBox.type == Props.INCOME_TAX:
             # the player should lose 200 for every property he owns
-            self.current_player.cash -= 200 * len(self.current_player.properties)
+            current_player.cash -= 200 * len(current_player.properties)
             return "You paid 200 for each property you own"
 
         if landingBox.type == Props.KRONOS:
-            self.current_player.cash = int(self.current_player.cash * 0.9)
+            current_player.cash = int(current_player.cash * 0.9)
             return "kronos"
 
         if landingBox.type == Props.CRYPTO_LOCKER:
-            for i in range(len(self.current_player.properties) // 2):
-                self.current_player.properties[-1].owner = "Bank"
-                self.current_player.properties.pop()
+            for i in range(len(current_player.properties) // 2):
+                current_player.properties[-1].owner = "Bank"
+                current_player.properties.pop()
             return "You lost half of your properties"
 
         if landingBox.type == Props.NORMAL:
             if landingBox.owner != "Bank":
-                if landingBox.owner != self.current_player:
-                    self.current_player.cash -= int(landingBox.price * 0.1)
+                if landingBox.owner != current_player:
+                    current_player.cash -= int(landingBox.price * 0.1)
                     landingBox.owner.cash += int(landingBox.price * 0.1)
                     return "You gotta pay the rent! 🙃"
                 return "Enjoy your property bruhh 👍"
@@ -76,61 +74,63 @@ class manager:
         return
 
     def handleChance(self, ch):
+        current_player = self.players[self.current_turn]
         ch = random.randint(1, 7)
         if ch == 1:
-            self.current_player.cash += 100
+            current_player.cash += 100
             return (
                 "You won a hackathon. Collect $100 as a reward for your coding skills"
             )
         elif ch == 2:
-            self.current_player.cash += 50
+            current_player.cash += 50
             return "Report a Critical Bug and receive a reward of $50 from a tech giant. Collect $50"
         elif ch == 3:
-            self.current_player.cash = max(0, self.current_player.cash - 50)
-            self.current_player.position += 3
+            current_player.cash = max(0, current_player.cash - 50)
+            current_player.position += 3
             return "Attend a tech conference. Pay $50 for the conference fee. Gain knowledge and advance 3 spaces."
         elif ch == 4:
-            self.current_player.cash = max(0, self.current_player.cash - 50)
+            current_player.cash = max(0, current_player.cash - 50)
             return "Your computer has been infected with Cryptolocker Pay a $50 ransom to unlock your files."
         elif ch == 5:
-            self.current_player.cash += 20
+            current_player.cash += 20
             return "Collect $20 as an investment in your company."
         elif ch == 6:
-            if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * len(self.current_player.properties)
+            if len(current_player.properties) > 0:
+                current_player.cash += 25 * len(current_player.properties)
                 return "Invest in cryptocurrency early. Collect $25 for each property you own."
         elif ch == 7:
-            self.current_player.cash += 50
+            current_player.cash += 50
             return "Collect $50 in royalties."
 
     def handleCommunityChest(self, ch):
+        current_player = self.players[self.current_turn]
         ch = random.randint(1, 8)
         if ch == 1:
-            self.current_player.cash += 50
+            current_player.cash += 50
             return "Contribute to an open-source project. Collect $50 in recognition of your tech skills."
         elif ch == 2:
-            self.current_player.cash = max(0, self.current_player.cash - 25)
+            current_player.cash = max(0, current_player.cash - 25)
             return "Your antivirus software has detected a virus. Pay $25 for cleanup."
         elif ch == 3:
-            self.current_player.cash += 100
+            current_player.cash += 100
             return "Your tech company is going public. Collect $100"
         elif ch == 4:
-            self.current_player.cash += 10
+            current_player.cash += 10
             return (
                 "Your tech blog gains popularity. Collect $10 as advertising revenue."
             )
         elif ch == 5:
-            self.current_player.cash += 60
+            current_player.cash += 60
             return "Work on a VR project. Collect $60 for your futuristic creation."
         elif ch == 6:
-            self.current_player.cash = max(0, self.current_player.cash - 75)
+            current_player.cash = max(0, current_player.cash - 75)
             return "Acquire a rival tech startup. Pay $75 for the purchase."
         elif ch == 7:
-            self.current_player.cash = max(0, self.current_player.cash - 50)
+            current_player.cash = max(0, current_player.cash - 50)
             return "Upgrade your home with smart tech. Pay $50 for the upgrade."
         elif ch == 8:
-            if len(self.current_player.properties) > 0:
-                self.current_player.cash += 25 * len(self.current_player.properties)
+            if len(current_player.properties) > 0:
+                current_player.cash += 25 * len(current_player.properties)
                 return "Invest in blockchain technology. Collect $25 for each property you own."
             return "Do nothing"
         else:

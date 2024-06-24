@@ -66,7 +66,7 @@ class Player:
         self.getOutOfJailFree = 0
         self.inJail = False
         self.position = 0
-        self.socket = socket
+        self.ws = socket
 
     def buy_property(self, property):
         if property.type is not NORMAL:
