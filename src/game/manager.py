@@ -174,3 +174,26 @@ class manager:
             print(self.current_player)
             self.current_turn += 1
             self.current_player = self.players[self.current_turn % len(self.players)]
+
+
+    
+    async def start_game(self):
+        random.shuffle(self.players)
+        await self.notify_everyone("Game has started")
+        self.current_turn = 0
+        obj = {'type': 'info', 'params': {'message': "Its your turn now"}}
+        cur = self.players[self.current_turn]
+        await cur.ws.socket.send(json.dumps(obj))
+        obj['params']['message'] = f"{cur.name}'s turn"
+        await self.host.socket.send(json.dumps(obj))
+
+    async def notify_everyone(self, msg):
+        for player in self.players:
+            await player.ws.socket.send(json.dumps({'type': 'message', 'params': {'message': msg}}))
+
+
+    async def move(self, dice):
+        cur = self.players[self.current_turn]
+        cur.move(dice)
+        msg = self.handleLanding(self.board[cur.position], dice)
+        await sendmsg(cur.socket.socket, msg)
